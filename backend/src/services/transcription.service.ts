@@ -30,23 +30,34 @@ export async function transcribeAudioBuffer(
   const captions: CaptionSegment[] = [];
 
   let currentTime = 0;
+
   for (const r of results) {
     const alt = r.alternatives?.[0];
     if (!alt?.transcript) continue;
+
     transcriptParts.push(alt.transcript);
 
-    // naive segmentation into ~5-second chunks
     const words = alt.words || [];
     const segmentText = alt.transcript;
-    const start = words[0]?.startTime?.seconds ?? currentTime;
-    const end = words[words.length - 1]?.endTime?.seconds ?? start + 5;
+
+    // Safely convert start/end times to numbers so we can do arithmetic
+    const start =
+      words[0]?.startTime?.seconds != null
+        ? Number(words[0].startTime!.seconds as any)
+        : currentTime;
+
+    const end =
+      words.length > 0 && words[words.length - 1].endTime?.seconds != null
+        ? Number(words[words.length - 1].endTime!.seconds as any)
+        : start + 5; // start is a number, so this is safe
 
     captions.push({
-      start: Number(start),
-      end: Number(end),
+      start,
+      end,
       text: segmentText
     });
-    currentTime = Number(end);
+
+    currentTime = end;
   }
 
   const transcript = transcriptParts.join(' ');

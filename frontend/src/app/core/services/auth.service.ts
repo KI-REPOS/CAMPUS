@@ -9,7 +9,7 @@ export class AuthService {
   constructor(private api: ApiService) {}
 
   login(email: string, password: string) {
-    return this.api.post<any>('/auth/login', { email, password }).pipe(
+    return this.api.post<any>('/api/auth/login', { email, password }).pipe(
       tap(res => {
         localStorage.setItem(this.tokenKey, res.token);
       })
@@ -17,11 +17,11 @@ export class AuthService {
   }
 
   register(data: any) {
-    return this.api.post('/auth/register', data);
+    return this.api.post('/api/auth/register', data);
   }
 
   loginWithGoogle(idToken: string) {
-    return this.api.post<any>('/auth/google', { idToken }).pipe(
+    return this.api.post<any>('/api/auth/google', { idToken }).pipe(
       tap(res => {
         localStorage.setItem(this.tokenKey, res.token);
       })

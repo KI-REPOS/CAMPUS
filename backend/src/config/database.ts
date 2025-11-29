@@ -35,5 +35,5 @@ export async function connectMySQL() {
 
 export async function connectDatabases() {
   await connectMongoDB();
-  await connectMySQL();
+  // await connectMySQL();
 }
